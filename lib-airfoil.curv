@@ -1,0 +1,87 @@
+/// **********************************************
+/// A library to manipulate airfoil sections.
+///
+/// An airfoil section is defined by the type:
+///   airfoil = [[x: float, y: float], ...]
+///
+/// Assumptions concerning airfoil:
+///   First index is trailing edge and each
+///   subsequent point are the next point in
+///   the counter clockwise direction.
+///
+///   teIdx = airfoil[0] as the trailing edge
+///   leIdx = The index of the  min(airfoil)[X]
+/// **********************************************
+
+
+{
+
+teIdx af = 0;
+    /// Return index of the trailing edge point.
+
+tePt af = af[teIdx(af)];
+    /// Return [x,y] of trailing edge
+
+teX af = tePt(af)[X];
+    /// Return X coordiante of trailing edge
+
+teY af = tePt(af)[Y];
+    /// Return Y coordiante of trailing edge
+
+leIdx af
+    /// Return index of the leading edge point
+  = do
+    local idx = 0;
+    local minIdx = inf;
+    local minX = inf;
+    for (pt in af) (
+      if (pt[X] < minX) (
+        minIdx := idx;
+        minX := pt[X];
+        //print "pt[X]=$(pt[X]) idx=$idx minIdx=$minIdx minX=$minX";
+      );
+      idx := idx + 1;
+    );
+  in
+    minIdx;
+
+lePt af = af[leIdx(af)];
+    /// Return [x,y] of leading edge
+
+leX af = lePt(af)[X];
+    /// Return X coordiante of leading edge
+
+leY af = lePt(af)[Y];
+    /// Return Y coordiante of leading edge
+
+normalize af
+    /// Return the normalized airfoil, which I
+    /// define as a airfoil section with a chord of 1.0
+  = do
+    local tex = teX af;
+    local lex = leX af;
+    local chord = tex - lex;
+    //print "tex=$tex lex=$lex chord=$chord";
+    local nAf = [for (pt in af) do
+        local x = pt[X];
+        local y = pt[Y];
+        //print "x=$x y=$y";
+      in
+        [x / chord, y / chord]
+    ];
+  in
+    nAf;
+
+fattenTe {
+      naf        /// Normalized af [[x,y], ...] with af[0] == trailing edge
+    , tt=1       /// Trailing edge Thickness
+    , chord=10   /// Chord length
+  }
+    /// Fatten Trailing Edge. Not yet implemented just
+    /// returns naf.
+  = do
+    //print "fattenTe naf=$naf tt=$tt chord=$chord NOP";
+  in
+    naf;
+
+}
